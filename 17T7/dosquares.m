@@ -14,6 +14,7 @@ end function;
 u := sqrt5 - 5;
 
 s := square/u + 3375/8796093022208;
+s := square*u + 3375/8796093022208;
 try
     f := Fbest(s);
 catch e
