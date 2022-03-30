@@ -1,5 +1,6 @@
 https://beta.lmfdb.org/GaloisGroup/17T7
 https://beta.lmfdb.org/GaloisGroup/17T8
+https://beta.lmfdb.org/GaloisGroup/34T28 // we want this one!
 https://beta.lmfdb.org/GaloisGroup/34T82
 https://beta.lmfdb.org/GaloisGroup/34T84
 https://beta.lmfdb.org/GaloisGroup/34T85
