@@ -1,4 +1,5 @@
-AttachSpec("spec");
+//AttachSpec("spec");
+Attach("polredabs.m");
 QQ := Rationals();
 L<nu> := QuadraticField(5);
 R<t,x> := PolynomialRing(QQ,2);
