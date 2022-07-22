@@ -1,4 +1,4 @@
-C4 := CyclicGroup(4);                                                                                                     
+C4 := CyclicGroup(4);
 C5 := CyclicGroup(5);
 W := WreathProduct(C5,C4);
 D0 := DirectProduct(C5,C4);
