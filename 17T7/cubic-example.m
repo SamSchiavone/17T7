@@ -34,7 +34,7 @@ ReduceGenerators(~Ginv);
 pp := MultivariatePolynomial(p);
 R0<[x]> := Parent(pp);
 R1 := ChangeRing(R0,QQ);
-R3<x1,x2,x3,x4,x5,x6,t0,t1> := PolynomialRing(QQ,8);
+R3<x1,x2,x3,x4,x5,x6,t0,t1,y> := PolynomialRing(QQ,9);
 SS<yy> := PolynomialRing(R0);
 hh := &*[yy - Evaluate(pp, [R0.(i^t) : i in [1..Degree(W)]]) : t in T];
 S<s1,s2,s3,s4,s5,s6> := PolynomialRing(QQ,6);
@@ -48,12 +48,17 @@ Kt<T0,T1> := RationalFunctionField(K,2);
 Rg<x> := PolynomialRing(Kt);
 g := (x^3 - (T0 + T1*z))*(x^3 - (T0 + T1*z^2));
 cs_g := Coefficients(g);
+mp_g := hom< Parent(cs_g[1]) -> R3 | [t0,t1] >;
+cs_g := [mp_g(el) : el in cs_g];
+Remove(~cs_g, #cs_g);
+Reverse(~cs_g);
 
 mp_x := hom<R1 -> R3 | [x1,x2,x3,x4,x5,x6]>;
 //gens := [mp_x(syms[1]), mp_x(syms[2]), -mp_x(syms[3]) - (-2*t0+t1), mp_x(syms[4]), mp_x(syms[5]), mp_x(syms[6]) - (t0^2 - t0*t1 + t1^2)];
-gens := [(syms[1]), (syms[2]), -(syms[3]) - (-2*t0+t1), (syms[4]), (syms[5]), (syms[6]) - (t0^2 - t0*t1 + t1^2)];
+//gens_old := [(syms[1]), (syms[2]), -(syms[3]) - (-2*t0+t1), (syms[4]), (syms[5]), (syms[6]) - (t0^2 - t0*t1 + t1^2)];
+gens := [(-1)^i*syms[i] - cs_g[i] : i in [1..#cs_g]];
 I := ideal< R3 | gens >;
-EliminationIdeal(I, {t0,t1});
+EliminationIdeal(I, {t0,t1,y});
 
 // copypasta
 /*
