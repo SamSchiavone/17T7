@@ -26,9 +26,9 @@ for pi in Sym(6) do
 end for;
 
 // group under which coefficients are invariant
-K := sub< Sym(6) | invs>;
-#K;    
-ReduceGenerators(~K);
+Ginv := sub< Sym(6) | invs>;
+#Ginv;    
+ReduceGenerators(~Ginv);
 
 // compute G-relative H-invariant resolvent
 pp := MultivariatePolynomial(p);
@@ -41,6 +41,13 @@ S<s1,s2,s3,s4,s5,s6> := PolynomialRing(QQ,6);
 mp_S := hom< S -> R3 | [R3.i : i in [1..6]] >;
 syms := [mp_S(ElementarySymmetricPolynomial(S,i)) : i in [1..6]];
 cs_hh := Coefficients(hh);
+
+// polynomial g with Galois group wreath product
+K<z> := CyclotomicField(3);
+Kt<T0,T1> := RationalFunctionField(K,2);
+R<x> := PolynomialRing(Kt);
+g := (x^3 - (T0 + T1*z))*(x^3 - (T0 + T1*z^2));
+cs_g := Coefficients(g);
 
 mp_x := hom<R1 -> R3 | [x1,x2,x3,x4,x5,x6]>;
 //gens := [mp_x(syms[1]), mp_x(syms[2]), -mp_x(syms[3]) - (-2*t0+t1), mp_x(syms[4]), mp_x(syms[5]), mp_x(syms[6]) - (t0^2 - t0*t1 + t1^2)];
