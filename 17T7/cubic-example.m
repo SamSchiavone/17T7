@@ -45,7 +45,7 @@ cs_hh := Coefficients(hh);
 // polynomial g with Galois group wreath product
 K<z> := CyclotomicField(3);
 Kt<T0,T1> := RationalFunctionField(K,2);
-R<x> := PolynomialRing(Kt);
+Rg<x> := PolynomialRing(Kt);
 g := (x^3 - (T0 + T1*z))*(x^3 - (T0 + T1*z^2));
 cs_g := Coefficients(g);
 
