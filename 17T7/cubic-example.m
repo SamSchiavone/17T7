@@ -1,19 +1,21 @@
 // Example 4.3.4 in Couvillion's thesis
-C2 := CyclicGroup(2);
-C3 := CyclicGroup(3);
-W := WreathProduct(C3,C2);
-D0 := DirectProduct(C3,C2);
-D := [el : el in Subgroups(W : OrderEqual := (#C3*#C2)) | IsIsomorphic(el`subgroup, D0)][1]`subgroup;
-T := Transversal(W,D);
-p := RelativeInvariant(W,D);
-R := Parent(p);
-S<y> := SLPolynomialRing(R,1);
-h := &*[y - Evaluate(p, [R.(i^t) : i in [1..Degree(W)]]) : t in T];
+/*
+  C2 := CyclicGroup(2);
+  C3 := CyclicGroup(3);
+  W := WreathProduct(C3,C2);
+  D0 := DirectProduct(C3,C2);
+  D := [el : el in Subgroups(W : OrderEqual := (#C3*#C2)) | IsIsomorphic(el`subgroup, D0)][1]`subgroup;
+  T := Transversal(W,D);
+  p := RelativeInvariant(W,D);
+  R := Parent(p);
+  S<y> := SLPolynomialRing(R,1);
+  h := &*[y - Evaluate(p, [R.(i^t) : i in [1..Degree(W)]]) : t in T];
 
-pp := MultivariatePolynomial(p);
-R0<[x]> := Parent(pp);
-SS<yy> := PolynomialRing(R0);
-hh := &*[yy - Evaluate(pp, [R0.(i^t) : i in [1..Degree(W)]]) : t in T];
+  pp := MultivariatePolynomial(p);
+  R0<[x]> := Parent(pp);
+  SS<yy> := PolynomialRing(R0);
+  hh := &*[yy - Evaluate(pp, [R0.(i^t) : i in [1..Degree(W)]]) : t in T];
+*/
 
 // copypasta
 
@@ -26,28 +28,29 @@ D := [el : el in Subgroups(W : OrderEqual := (#C3*#C2)) | IsIsomorphic(el`subgro
 T := Transversal(W,D);
 p := RelativeInvariant(W,D);
 p;
-Type(p);
 R := Parent(p);
-x1;
-R<[x]> := Parent(p);
-R := Parent(p);
-R.1;
-R.2;
-S<y> := SLPolynomialRing(R);
-SLPolynomialRing;
-Type(R);
-ISA($1,Rng);
-Type(R);
-S := SLPolynomialRing(R);
-S<y> := SLPolynomialRing(R,1);
-S;
-T;
-h := &*[y - Evaluate(p, [x[i^t] : i in [1..20]]) : t in T];
-h := &*[y - Evaluate(p, [R.(i^t) : i in [1..20]]) : t in T];
-Degree(C2);
-Degree(W);
+S<y> := PolynomialRing(R);
 h := &*[y - Evaluate(p, [R.(i^t) : i in [1..Degree(W)]]) : t in T];
 h;
+cs := Coefficients(h);
+invs := [];
+for pi in Sym(6) do
+  inv_bool := true;
+  for c in cs do 
+    if not IsInvariant(c,pi) then
+      inv_bool := false;
+    end if;
+  end for;
+  if inv_bool then
+    Append(~invs, pi);
+  end if;
+end for;
+
+K := sub< Sym(6) | invs>;
+#K;    
+ReduceGenerators(~K);
+
+/*
 pp := MultivariatePolynomial(p);
 R0 := Parent(pp);
 SS<yy> := PolynomialRing(R0);
@@ -166,11 +169,8 @@ Domain(mp_x);
 $1 eq BaseRing(Parent(hh));
 R1;
 mp_x := hom<BaseRing(hh) -> R3 | [x1,x2,x3,x4,x5,x6]>;
-hom< Parent(hh) -> R3 | mp_x, y >;
-mp_y := $1;
-I := ideal< R3 | gens cat [mp_y(hh)] >;
+mp_y := hom< Parent(hh) -> R3 | mp_x, y >;
 gens := [mp_x(ss[1]), mp_x(ss[2]), -mp_x(ss[3]) - (-2*t0+t1), mp_x(ss[4]), mp_x(ss[5]), mp_x(ss[6]) - (t0^2 - t0*t1 + t1^2)];
 I := ideal< R3 | gens cat [mp_y(hh)] >;
-I;
-Elimination(I, {t0,t1,y});
 EliminationIdeal(I, {t0,t1,y});
+*/
