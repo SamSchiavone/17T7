@@ -1,25 +1,4 @@
 // Example 4.3.4 in Couvillion's thesis
-/*
-  C2 := CyclicGroup(2);
-  C3 := CyclicGroup(3);
-  W := WreathProduct(C3,C2);
-  D0 := DirectProduct(C3,C2);
-  D := [el : el in Subgroups(W : OrderEqual := (#C3*#C2)) | IsIsomorphic(el`subgroup, D0)][1]`subgroup;
-  T := Transversal(W,D);
-  p := RelativeInvariant(W,D);
-  R := Parent(p);
-  S<y> := SLPolynomialRing(R,1);
-  h := &*[y - Evaluate(p, [R.(i^t) : i in [1..Degree(W)]]) : t in T];
-
-  pp := MultivariatePolynomial(p);
-  R0<[x]> := Parent(pp);
-  SS<yy> := PolynomialRing(R0);
-  hh := &*[yy - Evaluate(pp, [R0.(i^t) : i in [1..Degree(W)]]) : t in T];
-*/
-
-// copypasta
-
-// Example 4.3.4 in Couvillion's thesis
 C2 := CyclicGroup(2);
 C3 := CyclicGroup(3);
 W := WreathProduct(C3,C2);
@@ -69,6 +48,7 @@ gens := [(syms[1]), (syms[2]), -(syms[3]) - (-2*t0+t1), (syms[4]), (syms[5]), (s
 I := ideal< R3 | gens >;
 EliminationIdeal(I, {t0,t1});
 
+// copypasta
 /*
   pp := MultivariatePolynomial(p);
   R0 := Parent(pp);
