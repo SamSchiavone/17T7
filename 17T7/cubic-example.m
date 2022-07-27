@@ -1,4 +1,5 @@
 // Example 4.3.4 in Couvillion's thesis
+SetVerbose("Groebner",true);
 C2 := CyclicGroup(2);
 C3 := CyclicGroup(3);
 W := WreathProduct(C3,C2);
@@ -57,7 +58,12 @@ mp_x := hom<R1 -> R3 | [x1,x2,x3,x4,x5,x6]>;
 //gens := [mp_x(syms[1]), mp_x(syms[2]), -mp_x(syms[3]) - (-2*t0+t1), mp_x(syms[4]), mp_x(syms[5]), mp_x(syms[6]) - (t0^2 - t0*t1 + t1^2)];
 //gens_old := [(syms[1]), (syms[2]), -(syms[3]) - (-2*t0+t1), (syms[4]), (syms[5]), (syms[6]) - (t0^2 - t0*t1 + t1^2)];
 gens := [(-1)^i*syms[i] - cs_g[i] : i in [1..#cs_g]];
+mp_cs_h := hom<BaseRing(Parent(hh)) -> R3 | [x1,x2,x3,x4,x5,x6] >;
+mp_hh := hom< Parent(hh) -> R3 | mp_cs_h, [y]>;
+h3 := mp_hh(hh);
+Append(~gens, h3);
 I := ideal< R3 | gens >;
+answer := y^3 - 6^3*(t1^2 - t0*t1 + t0^2);
 EliminationIdeal(I, {t0,t1,y});
 
 // copypasta
