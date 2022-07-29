@@ -1,17 +1,18 @@
 // Example 4.3.4 in Couvillion's thesis
 SetVerbose("Groebner",true);
-C2 := CyclicGroup(2);
-C3 := CyclicGroup(3);
-W := WreathProduct(C3,C2);
-D0 := DirectProduct(C3,C2);
-D := [el : el in Subgroups(W : OrderEqual := (#C3*#C2)) | IsIsomorphic(el`subgroup, D0)][1]`subgroup;
+prime := 5;
+Cpm1 := CyclicGroup(prime-1);
+Cp := CyclicGroup(prime);
+W := WreathProduct(Cp,Cpm1);
+D0 := DirectProduct(Cp,Cpm1);
+D := [el : el in Subgroups(W : OrderEqual := (#Cp*#Cpm1)) | IsIsomorphic(el`subgroup, D0)][1]`subgroup;
 T := Transversal(W,D);
 p := RelativeInvariant(W,D);
 p;
 R := Parent(p);
 S<y> := PolynomialRing(R);
 h := &*[y - Evaluate(p, [R.(i^t) : i in [1..Degree(W)]]) : t in T];
-h;
+//h;
 cs := Coefficients(h);
 invs := [];
 for pi in Sym(6) do
@@ -44,7 +45,7 @@ syms := [mp_S(ElementarySymmetricPolynomial(S,i)) : i in [1..6]];
 cs_hh := Coefficients(hh);
 
 // polynomial g with Galois group wreath product
-K<z> := CyclotomicField(3);
+K<z> := CyclotomicField(prime);
 Kt<T0,T1> := RationalFunctionField(K,2);
 Rg<x> := PolynomialRing(Kt);
 g := (x^3 - (T0 + T1*z))*(x^3 - (T0 + T1*z^2));
