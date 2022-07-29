@@ -63,7 +63,7 @@ FFu<u> := FunctionField(GF(ll));
 FFxt<xx> := ChangeRing(QQxt,FFu);
 pi := hom< QQxt -> FFxt | FFxt.1 >;
 gev_FF := pi(gev);
-SetVerbose("GaloisGroup",5);
+//SetVerbose("GaloisGroup",5);
 G := GaloisGroup(gev_FF);
 assert #G eq prime^(prime-1)*(prime-1);
 P := DirectProduct(C1,C2);
