@@ -58,8 +58,13 @@ QQxt<x> := PolynomialRing(QQt);
 mp_cs := hom< KTs -> QQt | [t,1,1,1] >;
 mp := hom< KXTs -> QQxt | mp_cs, [x] >;
 gev := mp(g);
+ll := 7;
+FFu<u> := FunctionField(GF(ll));
+FFxt<xx> := ChangeRing(QQxt,FFu);
+pi := hom< QQxt -> FFxt | FFxt.1 >;
+gev_FF := pi(gev);
 SetVerbose("GaloisGroup",5);
-G := GaloisGroup(gev);
+G := GaloisGroup(gev_FF);
 assert #G eq prime^(prime-1)*(prime-1);
 P := DirectProduct(C1,C2);
 Hs := [];
@@ -70,7 +75,7 @@ for el in Subgroups(G : OrderEqual := prod) do
 end for;
 assert #Hs eq 1;
 H := Hs[1];
-GaloisSubgroup(gev,H`subgroup); // hangs; try over finite field?
+GaloisSubgroup(gev_FF,H`subgroup); // hangs; try over finite field?
 
 gens := [syms[six+1-i]-temp(elt) : i->elt in Coefficients(g)[1..six]] where temp := hom<KTs -> R3 | [R3.(six+i) : i in [1..prime-1]]>;
 mp_x := hom<BaseRing(Parent(hh)) -> R3 | [R3.i : i in [1..six]]>;
