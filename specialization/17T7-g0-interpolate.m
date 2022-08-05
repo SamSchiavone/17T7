@@ -19,6 +19,7 @@ mp_one_var := hom< S0 -> S | mp_cs, [z]>;
 
 Fev := mp_one_var(mp(Fev));
 SetVerbose("GaloisGroup",5);
+SetVerbose("Invariant",3);
 //G := GaloisGroup(Fev); // hangs; try over finite field
 
 p := 3;
