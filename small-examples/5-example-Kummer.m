@@ -1,0 +1,11 @@
+K<z> := CyclotomicField(5);
+OK := Integers(K);
+B := Basis(OK);
+Kx<[x]> := RationalFunctionField(K,4);
+G, pow, mp := AutomorphismGroup(K);
+tau := mp(G.1^3);
+assert tau(z) eq z^2;
+i := Coercion(K,Kx);
+tau_t := hom< Kx -> Kx | tau*i, [Kx.i : i in [1..4]] >;
+gen := &+[B[i]*Kx.i : i in [1..4]];
+a := gen^8*tau_t(gen)^4*((tau_t^2)(gen))^2*(tau_t^3)(gen);
