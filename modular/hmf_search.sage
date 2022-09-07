@@ -24,9 +24,20 @@ for rec in hmfs0:
         if H.is_totally_real():
             OH = H.ring_of_integers()
             if OH.ideal(2).is_prime():
-                print("Found one!")
-                cnt += 1
-                hmfs.append(rec['label'])
-                with open("/scratch/home/sschiavo/github/17T7/modular/hmf_output.txt","a") as my_file:
-                    my_file.write("%s\n" % rec["label"])
+                inv_bool = False
+                # check if H has involution
+                if H.is_galois():
+                    G_H = H.galois_group()
+                    if G_H.order() % 2 == 0:
+                        inv_bool = True
+                else:
+                    for phi in H.automorphisms():
+                        if (phi(e) != e) and (phi(phi(e)) == e):
+                            inv_bool = True
+                if inv_bool:
+                    print("Found one!")
+                    cnt += 1
+                    hmfs.append(rec['label'])
+                    with open("/scratch/home/sschiavo/github/17T7/modular/hmf_output.txt","a") as my_file:
+                        my_file.write("%s\n" % rec["label"])
 print("Found %s suitable HMFs" % cnt)
