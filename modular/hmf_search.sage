@@ -4,6 +4,7 @@ print("Computing list of HMFs with needed dimension and degree that are not base
 hmfs0 = db.hmf_forms.search({'dimension':4, 'deg':2, 'is_base_change':'no'})
 hmfs = []
 print("Searching for HMFS whose level is Galois invariant, whose Hecke eigenvalue field is totally real and in which 2 is inert")
+cnt = 0
 for rec in hmfs0:
     print("Checking %s" % rec['label'])
     fld_rec = db.nf_fields.lookup(rec['field_label'])
@@ -24,4 +25,8 @@ for rec in hmfs0:
             OH = H.ring_of_integers()
             if OH.ideal(2).is_prime():
                 print("Found one!")
+                cnt += 1
                 hmfs.append(rec['label'])
+                with open("/scratch/home/sschiavo/github/17T7/modular/hmf_output.txt","a") as my_file:
+                    my_file.write("%s\n" % rec["label"])
+print("Found %s suitable HMFs" % cnt)
