@@ -9,3 +9,5 @@ i := Coercion(K,Kx);
 tau_t := hom< Kx -> Kx | tau*i, [Kx.i : i in [1..4]] >;
 gen := &+[B[i]*Kx.i : i in [1..4]];
 a := gen^8*tau_t(gen)^4*((tau_t^2)(gen))^2*(tau_t^3)(gen);
+ratio := (tau_t(a))/a^2;
+test := 1/(gen^(2^(5-1)-1));
