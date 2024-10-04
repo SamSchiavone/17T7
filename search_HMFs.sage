@@ -44,12 +44,17 @@ def has_surjective_trace(level_norm, hecke_eigenvalues, prime=2, proof=False):
 	#return histogram == [True for x in Fq]
 	return len(set(reduced_eigenvals)) == prime**hecke_field.degree()
 
+def nth_iterate(f,x,n):
+	if n == 0:
+		return x
+	else:
+		return f(nth_iterate(f,x,n-1))
+
 def get_elements_of_order(H, d):
 	e = H.gens()[0]
     #auts = H.galois_group()
 	auts = H.automorphisms()
-	assert d == 2
-	return [f for f in auts if (not f.is_identity()) and (f(f(e)) == e)]
+	return [f for f in auts if (not f.is_identity()) and (nth_iterate(f,e,d) == e)]
     #return [f for f in auts if f.order() == d]
 
 def check_congruence_mod_frp(F, frp, iota, p, ap_dict, field_degree=2, prime=2):
