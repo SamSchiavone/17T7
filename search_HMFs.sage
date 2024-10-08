@@ -65,14 +65,24 @@ def check_congruence_mod_frp(F, frp, iota, p, ap_dict, field_degree=2, prime=2):
 	apbar = ap_dict[sigma(p)]
 	return apbar - iota(ap) in frp
 
+def check_conjugacy_on_the_nose(F, frp, iota, p, ap_dict, field_degree=2, prime=2):
+	assert F.degree() == field_degree
+	#sigma = [f for f in F.automorphisms() if not f.is_identity()][0]
+	sigma = get_elements_of_order(F, field_degree)[0]
+	ap = ap_dict[p]
+	apbar = ap_dict[sigma(p)]
+	return apbar == iota(ap)
+
 
 def search(ab_var_dimension=4, field_degree=2, prime=2, field_labels=None):
     res = []
     res_failed = []
+    res_on_the_nose = []
 
     R = PolynomialRing(QQ, 'x')
-    query  = {'dimension':ab_var_dimension, 'deg':field_degree, 'is_base_change':'no'}
+    query = {'dimension':ab_var_dimension, 'deg':field_degree, 'is_base_change':'no'}
     log_file = open(f"output_SL2_F_{prime**ab_var_dimension}.txt", "w")
+    log_file_on_the_nose = open(f"output_SL2_F_{prime**ab_var_dimension}.on_the_nose.txt", "w")
     if field_labels is None:
         field_labels = db.hmf_forms.distinct('field_label', query)
         # print(field_labels)
@@ -90,7 +100,7 @@ def search(ab_var_dimension=4, field_degree=2, prime=2, field_labels=None):
         records = list(db.hmf_forms.search(query, ['field_label', 'level_ideal', 'label', 'level_norm']))
         levels = set(elt['level_ideal'] for elt in records)
         ps = primes_list(F, field_label)
-        invariant_levels = [] 
+        invariant_levels = []
         for elt in levels:
             # level ideal == conjugate
             level_gens = eval(elt)
@@ -102,7 +112,7 @@ def search(ab_var_dimension=4, field_degree=2, prime=2, field_labels=None):
 
         labels = [elt['label'] for elt in level_records]
         #hecke_field_dict = dict((rec["label"], rec["hecke_polynomial"]) for rec in db.hmf_hecke.search({"label": {"$like": f'{field_label}-%'}}, ["label", "hecke_polynomial"]))
-        hecke_field_dict = dict((rec["label"], [rec["hecke_polynomial"], rec["hecke_eigenvalues"]] ) for rec in db.hmf_hecke.search({"label": {"$in": labels}}, ["label", "hecke_polynomial", "hecke_eigenvalues"]))
+        hecke_field_dict = dict((rec["label"], [rec["hecke_polynomial"], rec["hecke_eigenvalues"]]) for rec in db.hmf_hecke.search({"label": {"$in": labels}}, ["label", "hecke_polynomial", "hecke_eigenvalues"]))
         print(field_label, len(level_records))
         for rec in level_records:
             # Hecke stuff
@@ -133,6 +143,7 @@ def search(ab_var_dimension=4, field_degree=2, prime=2, field_labels=None):
                 res_failed.append(("not surjective trace", rec))
                 continue
 
+            # test whether congruence is satisfied mod p for small Fourier coefficients
             for sigma in sigmas:
                 for p in ps:
                     if not check_congruence_mod_frp(F, frp, sigma, p, aps, prime=prime, field_degree=field_degree):
@@ -144,8 +155,25 @@ def search(ab_var_dimension=4, field_degree=2, prime=2, field_labels=None):
                     break
             else:
                 res_failed.append(("not mod {prime}", rec))
-    log_file.close()
-    return [res, res_failed]
+            
+            # test whether conjugate form is HMF
+            for sigma in sigmas:
+                for p in ps:
+                    if not check_conjugacy_on_the_nose(F, frp, sigma, p, aps, prime=prime, field_degree=field_degree):
+                        break
+                else:
+                    log_file_on_the_nose.write(rec['label'] + "\n")
+                    log_file_on_the_nose.flush()
+                    res.append(rec)
+                    break
+            else:
+                pass
 
-foo2 = search(field_labels=["2.2.8.1", "2.2.12.1", "2.2.5.1", "2.2.24.1"])
-len(foo2[0])
+    log_file.close()
+    log_file_on_the_nose.close()
+    return [res, res_on_the_nose, res_failed]
+
+result = search(field_labels=["2.2.8.1"])
+#result = search(field_labels=["2.2.8.1", "2.2.12.1", "2.2.5.1", "2.2.24.1"])
+#result = search()
+print(len(result[0]), len(result[1]))
