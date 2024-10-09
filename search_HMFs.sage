@@ -77,12 +77,12 @@ def check_conjugacy_on_the_nose(F, frp, iota, p, ap_dict, field_degree=2, prime=
 def search(ab_var_dimension=4, field_degree=2, prime=2, field_labels=None):
     res = []
     res_failed = []
-    res_on_the_nose = []
+    #res_on_the_nose = []
 
     R = PolynomialRing(QQ, 'x')
     query = {'dimension':ab_var_dimension, 'deg':field_degree, 'is_base_change':'no'}
     log_file = open(f"output_SL2_F_{prime**ab_var_dimension}.txt", "w")
-    log_file_on_the_nose = open(f"output_SL2_F_{prime**ab_var_dimension}.on_the_nose.txt", "w")
+    #log_file_on_the_nose = open(f"output_SL2_F_{prime**ab_var_dimension}.on_the_nose.txt", "w")
     if field_labels is None:
         field_labels = db.hmf_forms.distinct('field_label', query)
         # print(field_labels)
@@ -156,6 +156,7 @@ def search(ab_var_dimension=4, field_degree=2, prime=2, field_labels=None):
             else:
                 res_failed.append(("not mod {prime}", rec))
             
+            """
             # test whether conjugate form is HMF
             for sigma in sigmas:
                 for p in ps:
@@ -168,12 +169,14 @@ def search(ab_var_dimension=4, field_degree=2, prime=2, field_labels=None):
                     break
             else:
                 pass
+            """
 
     log_file.close()
-    log_file_on_the_nose.close()
-    return [res, res_on_the_nose, res_failed]
+    #log_file_on_the_nose.close()
+    return [res, res_failed]
+    #return [res, res_on_the_nose, res_failed]
 
-result = search(field_labels=["2.2.8.1"])
+#result = search(field_labels=["2.2.8.1"])
 #result = search(field_labels=["2.2.8.1", "2.2.12.1", "2.2.5.1", "2.2.24.1"])
-#result = search()
+result = search()
 print(len(result[0]), len(result[1]))
