@@ -1,0 +1,125 @@
+jvoight@gunther tritangents % julia
+The latest version of Julia in the `release` channel is 1.11.5+0.aarch64.apple.darwin14. You currently have `1.11.4+0.aarch64.apple.darwin14` installed. Run:
+
+  juliaup update
+
+in your terminal shell to install Julia 1.11.5+0.aarch64.apple.darwin14 and update the `release` channel to that version.
+               _
+   _       _ _(_)_     |  Documentation: https://docs.julialang.org
+  (_)     | (_) (_)    |
+   _ _   _| |_  __ _   |  Type "?" for help, "]?" for Pkg help.
+  | | | | | | |/ _` |  |
+  | | |_| | | | (_| |  |  Version 1.11.4 (2025-03-10)
+ _/ |\__'_|_|_|\__'_|  |  Official https://julialang.org/ release
+|__/                   |
+
+julia> # from https://www.juliahomotopycontinuation.org/examples/tritangents/ #
+
+       using HomotopyContinuation, LinearAlgebra
+
+julia> @var h[1:3]
+(Variable[h₁, h₂, h₃],)
+
+julia> @var x[1:3] y[1:3] z[1:3]
+(Variable[x₁, x₂, x₃], Variable[y₁, y₂, y₃], Variable[z₁, z₂, z₃])
+
+julia> setprecision(1024)
+1024
+
+julia> Q = -8*x[1]^2 + 8*x[1]*x[2] - 34*x[1]*x[3] - 10*x[1] + 17*x[2]^2 - 2*x[2]*x[3] -
+                 9*x[2] - 28*x[3]^2 - 18*x[3] + 2
+2 - 10*x₁ - 9*x₂ - 18*x₃ + 8*x₂*x₁ - 2*x₂*x₃ - 34*x₃*x₁ - 8*x₁^2 + 17*x₂^2 - 28*x₃^2
+
+julia> C = 4*x[1]^3 - 6*x[1]^2*x[2] + 12*x[1]^2*x[3] + 2*x[1]^2 - 6*x[1]*x[2]^2 +
+                 6*x[1]*x[2]*x[3] + 7*x[1]*x[2] - 12*x[1]*x[3]^2 + 4*x[1]*x[3] - 20*x[1] +
+                 24*x[2]^2*x[3] + 4*x[2]^2 - 13*x[2]*x[3] - 24*x[3]^3 - 8*x[3]^2 - 3*x[3] -
+                 12
+-12 - 20*x₁ - 3*x₃ + 7*x₂*x₁ - 6*x₂*x₁^2 - 13*x₂*x₃ - 6*x₂^2*x₁ + 24*x₂^2*x₃ + 4*x₃*x₁ + 12*x₃*x₁^2 - 12*x₃^2*x₁ + 6*x₂*x₃*x₁ + 2*x₁^2 + 4*x₁^3 + 4*x₂^2 - 8*x₃^2 - 24*x₃^3
+
+julia> P_x = [
+               h ⋅ x - 1;
+               Q;
+               C;
+               det([h differentiate(Q, x) differentiate(C, x)])
+             ];
+
+julia> P_y = [p([h; x] => [h; y]) for p in P_x];
+
+julia> P_z = [p([h; x] => [h; z]) for p in P_x];
+
+julia> F = System([P_x; P_y; P_z]; variables = [h;x;y;z])
+System of length 12
+ 12 variables: h₁, h₂, h₃, x₁, x₂, x₃, y₁, y₂, y₃, z₁, z₂, z₃
+
+ -1 + h₁*x₁ + h₂*x₂ + h₃*x₃
+ 2 - 10*x₁ - 9*x₂ - 18*x₃ + 8*x₂*x₁ - 2*x₂*x₃ - 34*x₃*x₁ - 8*x₁^2 + 17*x₂^2 - 28*x₃^2
+ -12 - 20*x₁ - 3*x₃ + 7*x₂*x₁ - 6*x₂*x₁^2 - 13*x₂*x₃ - 6*x₂^2*x₁ + 24*x₂^2*x₃ + 4*x₃*x₁ + 12*x₃*x₁^2 - 12*x₃^2*x₁ + 6*x₂*x₃*x₁ + 2*x₁^2 + 4*x₁^3 + 4*x₂^2 - 8*x₃^2 - 24*x₃^3
+ h₁*(-(-18 - 34*x₁ - 2*x₂ - 56*x₃)*(7*x₁ + 8*x₂ - 13*x₃ - 12*x₂*x₁ + 48*x₂*x₃ + 6*x₃*x₁ - 6*x₁^2) + (-9 + 8*x₁ + 34*x₂ - 2*x₃)*(-3 + 4*x₁ - 13*x₂ - 16*x₃ + 6*x₂*x₁ - 24*x₃*x₁ + 12*x₁^2 + 24*x₂^2 - 72*x₃^2)) - h₂*(-(-18 - 34*x₁ - 2*x₂ - 56*x₃)*(-20 + 4*x₁ + 7*x₂ + 4*x₃ - 12*x₂*x₁ + 6*x₂*x₃ + 24*x₃*x₁ + 12*x₁^2 - 6*x₂^2 - 12*x₃^2) + (-10 - 16*x₁ + 8*x₂ - 34*x₃)*(-3 + 4*x₁ - 13*x₂ - 16*x₃ + 6*x₂*x₁ - 24*x₃*x₁ + 12*x₁^2 + 24*x₂^2 - 72*x₃^2)) + ((-10 - 16*x₁ + 8*x₂ - 34*x₃)*(7*x₁ + 8*x₂ - 13*x₃ - 12*x₂*x₁ + 48*x₂*x₃ + 6*x₃*x₁ - 6*x₁^2) - (-9 + 8*x₁ + 34*x₂ - 2*x₃)*(-20 + 4*x₁ + 7*x₂ + 4*x₃ - 12*x₂*x₁ + 6*x₂*x₃ + 24*x₃*x₁ + 12*x₁^2 - 6*x₂^2 - 12*x₃^2))*h₃
+ -1 + h₁*y₁ + h₂*y₂ + h₃*y₃
+ 2 - 10*y₁ - 9*y₂ - 18*y₃ + 8*y₁*y₂ - 34*y₁*y₃ - 2*y₃*y₂ - 8*y₁^2 + 17*y₂^2 - 28*y₃^2
+ -12 - 20*y₁ - 3*y₃ + 7*y₁*y₂ - 6*y₁*y₂^2 + 4*y₁*y₃ - 12*y₁*y₃^2 - 6*y₁^2*y₂ + 12*y₁^2*y₃ - 13*y₃*y₂ + 24*y₃*y₂^2 + 6*y₁*y₃*y₂ + 2*y₁^2 + 4*y₁^3 + 4*y₂^2 - 8*y₃^2 - 24*y₃^3
+ h₁*(-(-18 - 34*y₁ - 2*y₂ - 56*y₃)*(7*y₁ + 8*y₂ - 13*y₃ - 12*y₁*y₂ + 6*y₁*y₃ + 48*y₃*y₂ - 6*y₁^2) + (-9 + 8*y₁ + 34*y₂ - 2*y₃)*(-3 + 4*y₁ - 13*y₂ - 16*y₃ + 6*y₁*y₂ - 24*y₁*y₃ + 12*y₁^2 + 24*y₂^2 - 72*y₃^2)) - h₂*(-(-18 - 34*y₁ - 2*y₂ - 56*y₃)*(-20 + 4*y₁ + 7*y₂ + 4*y₃ - 12*y₁*y₂ + 24*y₁*y₃ + 6*y₃*y₂ + 12*y₁^2 - 6*y₂^2 - 12*y₃^2) + (-10 - 16*y₁ + 8*y₂ - 34*y₃)*(-3 + 4*y₁ - 13*y₂ - 16*y₃ + 6*y₁*y₂ - 24*y₁*y₃ + 12*y₁^2 + 24*y₂^2 - 72*y₃^2)) + ((-10 - 16*y₁ + 8*y₂ - 34*y₃)*(7*y₁ + 8*y₂ - 13*y₃ - 12*y₁*y₂ + 6*y₁*y₃ + 48*y₃*y₂ - 6*y₁^2) - (-9 + 8*y₁ + 34*y₂ - 2*y₃)*(-20 + 4*y₁ + 7*y₂ + 4*y₃ - 12*y₁*y₂ + 24*y₁*y₃ + 6*y₃*y₂ + 12*y₁^2 - 6*y₂^2 - 12*y₃^2))*h₃
+ -1 + h₁*z₁ + h₂*z₂ + h₃*z₃
+ 2 - 10*z₁ - 9*z₂ - 18*z₃ + 8*z₂*z₁ - 2*z₂*z₃ - 34*z₃*z₁ - 8*z₁^2 + 17*z₂^2 - 28*z₃^2
+ -12 - 20*z₁ - 3*z₃ + 7*z₂*z₁ - 6*z₂*z₁^2 - 13*z₂*z₃ - 6*z₂^2*z₁ + 24*z₂^2*z₃ + 4*z₃*z₁ + 12*z₃*z₁^2 - 12*z₃^2*z₁ + 6*z₂*z₃*z₁ + 2*z₁^2 + 4*z₁^3 + 4*z₂^2 - 8*z₃^2 - 24*z₃^3
+ h₁*(-(-18 - 34*z₁ - 2*z₂ - 56*z₃)*(7*z₁ + 8*z₂ - 13*z₃ - 12*z₂*z₁ + 48*z₂*z₃ + 6*z₃*z₁ - 6*z₁^2) + (-9 + 8*z₁ + 34*z₂ - 2*z₃)*(-3 + 4*z₁ - 13*z₂ - 16*z₃ + 6*z₂*z₁ - 24*z₃*z₁ + 12*z₁^2 + 24*z₂^2 - 72*z₃^2)) - h₂*(-(-18 - 34*z₁ - 2*z₂ - 56*z₃)*(-20 + 4*z₁ + 7*z₂ + 4*z₃ - 12*z₂*z₁ + 6*z₂*z₃ + 24*z₃*z₁ + 12*z₁^2 - 6*z₂^2 - 12*z₃^2) + (-10 - 16*z₁ + 8*z₂ - 34*z₃)*(-3 + 4*z₁ - 13*z₂ - 16*z₃ + 6*z₂*z₁ - 24*z₃*z₁ + 12*z₁^2 + 24*z₂^2 - 72*z₃^2)) + ((-10 - 16*z₁ + 8*z₂ - 34*z₃)*(7*z₁ + 8*z₂ - 13*z₃ - 12*z₂*z₁ + 48*z₂*z₃ + 6*z₃*z₁ - 6*z₁^2) - (-9 + 8*z₁ + 34*z₂ - 2*z₃)*(-20 + 4*z₁ + 7*z₂ + 4*z₃ - 12*z₂*z₁ + 6*z₂*z₃ + 24*z₃*z₁ + 12*z₁^2 - 6*z₂^2 - 12*z₃^2))*h₃
+
+julia> S = solve(F)
+Tracking 13608 paths... 100%|███████████████████████████| Time: 0:01:28
+                   # paths tracked: 13608
+   # non-singular solutions (real): 720 (18)
+       # singular endpoints (real): 3774 (209)
+          # total solutions (real): 4494 (227)
+Result with 4006 solutions
+==========================
+• 13608 paths tracked
+• 720 non-singular solutions (18 real)
+• 3286 singular solutions (161 real)
+• random_seed: 0x996af836
+• start_system: :polyhedral
+• multiplicity table of singular solutions:
+╭───────┬───────┬────────┬────────────╮
+│ mult. │ total │ # real │ # non-real │
+├───────┼───────┼────────┼────────────┤
+│   1   │ 2956  │  132   │    2824    │
+│   2   │  172  │   10   │    162     │
+│   3   │  158  │   19   │    139     │
+╰───────┴───────┴────────┴────────────╯
+
+
+julia> using Arblib
+
+julia> function refine(f::System, x0::AbstractVector{<:Complex}; prec = 256, atol = 0.0, iters = 10)
+                  F = InterpretedSystem(f)
+                  n, = size(F)
+                  y = AcbRefMatrix(x0; prec = prec)
+                  Δy = AcbRefMatrix(n, 1; prec = prec)
+                  u = AcbRefMatrix(n,1; prec = prec)
+                  U = AcbRefMatrix(n, n; prec = prec)
+                  mag = Arblib.Mag()
+                  for k in 1:iters
+                      evaluate_and_jacobian!(u, U, F, y)
+                      Arblib.get_mid!(u, u)
+                      Arblib.get_mid!(U, U)
+                      ldiv!(Δy, U, u)
+                      Arblib.get_mid!(Δy, Δy)
+                      Arblib.sub!(y, y, Δy)
+                      Arblib.get_mid!(y, y)
+                      Arblib.bound_inf_norm!(mag, Δy)
+                      if mag < atol
+                          break
+                      end
+                  end
+                  AcbVector(y[:,1])
+              end
+refine (generic function with 1 method)
+
+julia> sols = solutions(S);
+
+julia> sols_refined = [refine(F,s, prec = 30000) for s in sols];
+
+julia> io = open("sols_refined.out", "w");
+
+julia> print(io, sols_refined);
+
+julia> close(io);
