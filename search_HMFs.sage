@@ -1,8 +1,6 @@
 import sys
-#sys.path.append(os.path.join(os.environ["HOME"], "lmfdb"))
-sys.path.append("lmfdb/psycodict")
-from psycodict import psycopg2
-sys.path.append("lmfdb")
+sys.path.append(os.path.join(os.environ["HOME"], "lmfdb"))
+
 from lmfdb import db
 
 @cached_function
@@ -80,18 +78,18 @@ def search(ab_var_dimension=4, field_degree=2, prime=2, field_labels=None):
 
     R = PolynomialRing(QQ, 'x')
     query = {'dimension':ab_var_dimension, 'deg':field_degree, 'is_base_change':'no'}
-    log_file = open(f"output_SL2_F_{prime**ab_var_dimension}.txt", "w")
+    log_file = open(f"output_SL2_F_{prime**ab_var_dimension}_C{field_degree}.txt", "w")
     if field_labels is None:
         field_labels = db.hmf_forms.distinct('field_label', query)
         # print(field_labels)
-
     for field_label in field_labels:
         F = lmfdb_field(field_label)
         assert F.degree() == field_degree
         w = F.gen()
         OK = F.ring_of_integers()
         gal = F.galois_group()
-        assert gal.is_cyclic()
+        if not gal.is_cyclic():
+            continue
         sigma = gal[1]
         assert sigma(w) != w
         query['field_label'] = field_label
@@ -101,7 +99,7 @@ def search(ab_var_dimension=4, field_degree=2, prime=2, field_labels=None):
         invariant_levels = []
         for elt in levels:
             # level ideal == conjugate
-            level_gens = eval(elt)
+            level_gens = sage_eval(elt, locals=locals())
             level = OK.fractional_ideal(level_gens[1:])
             if sigma(level) == level:
                 invariant_levels.append(elt)
@@ -156,6 +154,8 @@ def search(ab_var_dimension=4, field_degree=2, prime=2, field_labels=None):
 
     log_file.close()
     return [res, res_failed]
+
+
 
 #result = search(field_labels=["2.2.8.1"])
 #result = search(field_labels=["2.2.8.1", "2.2.12.1", "2.2.5.1", "2.2.24.1"])
